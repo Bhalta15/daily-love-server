@@ -10,16 +10,19 @@ const ONESIGNAL_APP_ID = "1c802966-0ba1-4c4b-8b5b-7e0d8074f499";
 const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
 
 app.post("/notificar", async (req, res) => {
-  const { oneSignalId, tipo } = req.body;
+  const { oneSignalId, tipo, nombreUsuario } = req.body;
+
   if (!oneSignalId || !tipo) {
     return res.status(400).json({ error: "Faltan datos" });
   }
+
   const mensajesNoti = {
-    mensaje: "Te enviaron un mensaje 💬",
-    foto:    "Te compartieron una foto 📸",
-    cancion: "Te dedicaron una canción 🎵",
-    frase:   "Te dejaron una frase 💭"
+    mensaje: `${nombreUsuario} te envió un mensaje 💬`,
+    foto:    `${nombreUsuario} te compartió una foto 📸`,
+    cancion: `${nombreUsuario} te dedicó una canción 🎵`,
+    frase:   `${nombreUsuario} te dejó una frase 💭`
   };
+  // ... resto igual
   try {
     const response = await fetch("https://api.onesignal.com/notifications", {
       method: "POST",
@@ -31,7 +34,7 @@ app.post("/notificar", async (req, res) => {
         app_id:                   ONESIGNAL_APP_ID,
         target_channel:           "push",
         include_subscription_ids: [oneSignalId],
-        headings:                 { en: "Daily Love 💕" },
+        headings:                 { en: "Daily Love" },
         contents:                 { en: mensajesNoti[tipo] || "Tu pareja te dejó algo ❤️" }
       })
     });
