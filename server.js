@@ -7,22 +7,19 @@ app.use(cors({ origin: "https://bhalta15.github.io" }));
 app.use(express.json());
 
 const ONESIGNAL_APP_ID = "1c802966-0ba1-4c4b-8b5b-7e0d8074f499";
-const ONESIGNAL_API_KEY = "os_v2_app_dsacszqlufgexc23pygya5hutgahke7ue7xefxn4rlh7jz6w6xgmwtjx3cb57chqxwttwkfkjkkq6gk4pz7xql3qwbf7eft564ytdkq";
+const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
 
 app.post("/notificar", async (req, res) => {
   const { oneSignalId, tipo } = req.body;
-
   if (!oneSignalId || !tipo) {
     return res.status(400).json({ error: "Faltan datos" });
   }
-
   const mensajesNoti = {
     mensaje: "Te enviaron un mensaje 💬",
     foto:    "Te compartieron una foto 📸",
     cancion: "Te dedicaron una canción 🎵",
     frase:   "Te dejaron una frase 💭"
   };
-
   try {
     const response = await fetch("https://api.onesignal.com/notifications", {
       method: "POST",
@@ -38,7 +35,6 @@ app.post("/notificar", async (req, res) => {
         contents:                 { en: mensajesNoti[tipo] || "Tu pareja te dejó algo ❤️" }
       })
     });
-
     const data = await response.json();
     console.log("OneSignal response:", JSON.stringify(data));
     res.json(data);
