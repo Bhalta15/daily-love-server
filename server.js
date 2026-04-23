@@ -7,7 +7,7 @@ app.use(cors({ origin: "https://bhalta15.github.io" }));
 app.use(express.json());
 
 const ONESIGNAL_APP_ID = "1c802966-0ba1-4c4b-8b5b-7e0d8074f499";
-const ONESIGNAL_API_KEY = "os_v2_app_dsacszqlufgexc23pygya5hutej6m3hi6oje7m4gg4wwl7yfukeko6cxnvfchbszhuldpidtukwh4xl74xyk6xnp4tho2by5hhzmb4a";
+const ONESIGNAL_API_KEY = "os_v2_app_dsacszqlufgexc23pygya5hutgahke7ue7xefxn4rlh7jz6w6xgmwtjx3cb57chqxwttwkfkjkkq6gk4pz7xql3qwbf7eft564ytdkq";
 
 app.post("/notificar", async (req, res) => {
   const { oneSignalId, tipo } = req.body;
@@ -32,6 +32,7 @@ app.post("/notificar", async (req, res) => {
       },
       body: JSON.stringify({
         app_id:                   ONESIGNAL_APP_ID,
+        target_channel:           "push",
         include_subscription_ids: [oneSignalId],
         headings:                 { en: "Daily Love 💕" },
         contents:                 { en: mensajesNoti[tipo] || "Tu pareja te dejó algo ❤️" }
@@ -39,6 +40,7 @@ app.post("/notificar", async (req, res) => {
     });
 
     const data = await response.json();
+    console.log("OneSignal response:", JSON.stringify(data));
     res.json(data);
   } catch (error) {
     console.error("Error:", error);
