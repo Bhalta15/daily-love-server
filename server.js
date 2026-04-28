@@ -22,7 +22,7 @@ app.post("/notificar", async (req, res) => {
     cancion: `${nombreUsuario} te dedicó una canción 🎵`,
     frase:   `${nombreUsuario} te dejó una frase 💭`
   };
-  // ... resto igual
+  
   try {
     const response = await fetch("https://api.onesignal.com/notifications", {
       method: "POST",
@@ -36,6 +36,7 @@ app.post("/notificar", async (req, res) => {
         include_subscription_ids: [oneSignalId],
         headings:                 { en: "Daily Love" },
         contents:                 { en: mensajesNoti[tipo] || "Tu pareja te dejó algo ❤️" }
+        ttl:                      60
       })
     });
     const data = await response.json();
