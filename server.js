@@ -35,7 +35,7 @@ app.post("/notificar", async (req, res) => {
         target_channel:           "push",
         include_subscription_ids: [oneSignalId],
         headings:                 { en: "Daily Love" },
-        contents:                 { en: mensajesNoti[tipo] || "Tu pareja te dejó algo ❤️" }
+        contents:                 { en: mensajesNoti[tipo] || "Tu pareja te dejó algo ❤️" },
         ttl:                      60
       })
     });
