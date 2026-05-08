@@ -15,30 +15,30 @@ app.post("/notificar", async (req, res) => {
   }
 
   const tituloNuevo = {
-    mensaje: `${nombreUsuario}: nuevo mensaje💬`,
-    foto:    `${nombreUsuario}: nueva foto`,
-    cancion: `${nombreUsuario}: nueva canción`,
-    frase:   `${nombreUsuario}: nueva frase`,
-    cita:    `${nombreUsuario}: propuso nueva cita`,
-    plan:    `${nombreUsuario}: agregó nuevo plan 💡`
+    mensaje: `${nombreUsuario}: nuevo mensaje 💬`,
+    foto:    `${nombreUsuario}: nueva foto 📸`,
+    cancion: `${nombreUsuario}: nueva canción 🎵`,
+    frase:   `${nombreUsuario}: nueva frase 💭`,
+    cita:    `${nombreUsuario}: propuso nueva cita 🗓️`,
+    plan:    `${nombreUsuario}: agregó nuevo plan💡`
   };
 
   const tituloEditado = {
-    mensaje: `${nombreUsuario}: editó un mensaje`,
-    foto:    `${nombreUsuario}: actualizó una foto`,
-    cancion: `${nombreUsuario}: editó una canción`,
+    mensaje: `${nombreUsuario}: editó un mensaje 💬`,
+    foto:    `${nombreUsuario}: actualizó una foto 📸`,
+    cancion: `${nombreUsuario}: editó una canción 🎵`,
     frase:   `${nombreUsuario}: editó una frase 💭`,
     cita:    `${nombreUsuario}: editó una cita 🗓️`,
     plan:    `${nombreUsuario}: editó un plan 💡`
   };
 
   const tituloEliminado = {
-    mensaje: `${nombreUsuario}: eliminó un mensaje`,
-    foto:    `${nombreUsuario}: eliminó una foto`,
-    cancion: `${nombreUsuario}: eliminó una canción`,
-    frase:   `${nombreUsuario} eliminó una frase💭`,
-    cita:    `${nombreUsuario}: eliminó una cita🗓️`,
-    plan:    `${nombreUsuario}: eliminó un plan`
+    mensaje: `${nombreUsuario}: eliminó un mensaje 💬`,
+    foto:    `${nombreUsuario}: eliminó una foto 📸`,
+    cancion: `${nombreUsuario}: eliminó una canción 🎵`,
+    frase:   `${nombreUsuario}: eliminó una frase 💭`,
+    cita:    `${nombreUsuario}: eliminó una cita 🗓️`,
+    plan:    `${nombreUsuario}: eliminó un plan💡`
   };
 
   const tituloBase = esEliminacion
@@ -49,11 +49,57 @@ app.post("/notificar", async (req, res) => {
 
   const titulo = "Daily Love";
   // Al eliminar no hay preview
-  const cuerpo = (!esEliminacion && preview)
-    ? `${tituloBase}\n"${preview}"`
-    : tituloBase;
+let cuerpo = tituloBase;
 
-  const collapseId = `${oneSignalId}-${tipo}`;
+// previews solo para mensajes y frases
+if (
+  !esEliminacion &&
+  !esEdicion &&
+  preview &&
+  (tipo === "mensaje" || tipo === "frase")
+) {
+  cuerpo += `\n"${preview}"`;
+}
+
+// ediciones sí muestran preview
+if (
+  esEdicion &&
+  preview &&
+  (tipo === "mensaje" || tipo === "frase")
+) {
+  cuerpo += `\n"${preview}"`;
+}
+
+  let collapseId;
+
+if (esEdicion || esEliminacion) {
+  collapseId = `${oneSignalId}-${tipo}-${Date.now()}`;
+} else {
+  switch (tipo) {
+    case "mensaje":
+      collapseId = `${oneSignalId}-mensajes`;
+      break;
+
+    case "frase":
+      collapseId = `${oneSignalId}-frases`;
+      break;
+
+    case "foto":
+      collapseId = `${oneSignalId}-fotos`;
+      break;
+
+    case "cita":
+      collapseId = `${oneSignalId}-citas`;
+      break;
+
+    case "plan":
+      collapseId = `${oneSignalId}-planes`;
+      break;
+
+    default:
+      collapseId = `${oneSignalId}-general`;
+  }
+}
 
   try {
     const response = await fetch("https://api.onesignal.com/notifications", {
@@ -69,7 +115,7 @@ app.post("/notificar", async (req, res) => {
         headings:                 { en: titulo },
         contents:                 { en: cuerpo },
         collapse_id:              collapseId,
-        ttl:                      60
+        ttl:                      300
       })
     });
     const data = await response.json();
