@@ -47,7 +47,7 @@ app.post("/notificar", async (req, res) => {
       ? (tituloEditado[tipo] || `${nombreUsuario} editó algo ✏️`)
       : (tituloNuevo[tipo]   || "Tu pareja te dejó algo");
 
-  const titulo = "Daily Love 💕";
+  const titulo = "Daily Love";
   // Al eliminar no hay preview
   const cuerpo = (!esEliminacion && preview)
     ? `${tituloBase}\n"${preview}"`
