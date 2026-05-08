@@ -15,8 +15,8 @@ app.post("/notificar", async (req, res) => {
   }
 
   const tituloNuevo = {
-    mensaje: `${nombreUsuario} te envió un mensaje 💬`,
-    foto:    `${nombreUsuario} te compartió una foto 📸`,
+    mensaje: `${nombreUsuario} nuevo mensaje`,
+    foto:    `${nombreUsuario} (Foto)`,
     cancion: `${nombreUsuario} te dedicó una canción 🎵`,
     frase:   `${nombreUsuario} te dejó una frase 💭`,
     cita:    `${nombreUsuario} propuso una cita 🗓️`,
