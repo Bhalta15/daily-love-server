@@ -33,10 +33,10 @@ app.post("/notificar", async (req, res) => {
   };
 
   const tituloEliminado = {
-    mensaje: `${nombreUsuario} eliminó su mensaje 💬`,
-    foto:    `${nombreUsuario} eliminó su foto 📸`,
-    cancion: `${nombreUsuario} eliminó su canción 🎵`,
-    frase:   `${nombreUsuario} eliminó su frase 💭`,
+    mensaje: `${nombreUsuario} eliminó un mensaje 💬`,
+    foto:    `${nombreUsuario} eliminó una foto 📸`,
+    cancion: `${nombreUsuario} eliminó una canción 🎵`,
+    frase:   `${nombreUsuario} eliminó una frase 💭`,
     cita:    `${nombreUsuario} eliminó una cita 🗓️`,
     plan:    `${nombreUsuario} eliminó un plan 💡`
   };
@@ -45,7 +45,7 @@ app.post("/notificar", async (req, res) => {
     ? (tituloEliminado[tipo] || `${nombreUsuario} eliminó algo 🗑️`)
     : esEdicion
       ? (tituloEditado[tipo] || `${nombreUsuario} editó algo ✏️`)
-      : (tituloNuevo[tipo]   || "Tu pareja te dejó algo ❤️");
+      : (tituloNuevo[tipo]   || "Tu pareja te dejó algo");
 
   const titulo = "Daily Love 💕";
   // Al eliminar no hay preview
