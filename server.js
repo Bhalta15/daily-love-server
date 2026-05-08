@@ -108,14 +108,33 @@ if (esEdicion || esEliminacion) {
         "Content-Type":  "application/json",
         "Authorization": `Key ${ONESIGNAL_API_KEY}`
       },
-      body: JSON.stringify({
-        app_id:                   ONESIGNAL_APP_ID,
-        target_channel:           "push",
-        include_subscription_ids: [oneSignalId],
-        headings:                 { en: titulo },
-        contents:                 { en: cuerpo },
-        collapse_id:              collapseId,
-        ttl:                      300
+body: JSON.stringify({
+  app_id:                   ONESIGNAL_APP_ID,
+  target_channel:           "push",
+  include_subscription_ids: [oneSignalId],
+
+  headings: {
+    en: titulo
+  },
+
+  contents: {
+    en: cuerpo
+  },
+
+  // reemplaza notis similares
+  collapse_id: collapseId,
+
+  // agrupa visualmente en Android
+  android_group: collapseId,
+
+  // tiempo máximo esperando entregar
+  ttl: 300,
+
+  // prioridad alta
+  priority: 10,
+
+  // sonido
+  android_sound: "default"
       })
     });
     const data = await response.json();
