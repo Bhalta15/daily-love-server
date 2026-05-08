@@ -4,16 +4,16 @@ const fetch   = require("node-fetch");
 const app = express();
 app.use(cors({ origin: "https://bhalta15.github.io" }));
 app.use(express.json());
+
 const ONESIGNAL_APP_ID  = "1c802966-0ba1-4c4b-8b5b-7e0d8074f499";
 const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
 
 app.post("/notificar", async (req, res) => {
-  const { oneSignalId, tipo, nombreUsuario, preview, esEdicion } = req.body;
+  const { oneSignalId, tipo, nombreUsuario, preview, esEdicion, esEliminacion } = req.body;
   if (!oneSignalId || !tipo) {
     return res.status(400).json({ error: "Faltan datos" });
   }
 
-  // Títulos por tipo — nuevo o editado
   const tituloNuevo = {
     mensaje: `${nombreUsuario} te envió un mensaje 💬`,
     foto:    `${nombreUsuario} te compartió una foto 📸`,
@@ -22,6 +22,7 @@ app.post("/notificar", async (req, res) => {
     cita:    `${nombreUsuario} propuso una cita 🗓️`,
     plan:    `${nombreUsuario} agregó un plan 💡`
   };
+
   const tituloEditado = {
     mensaje: `${nombreUsuario} editó su mensaje 💬`,
     foto:    `${nombreUsuario} actualizó su foto 📸`,
@@ -31,17 +32,27 @@ app.post("/notificar", async (req, res) => {
     plan:    `${nombreUsuario} editó un plan 💡`
   };
 
-  const tituloBase = esEdicion
-    ? (tituloEditado[tipo] || `${nombreUsuario} editó algo ✏️`)
-    : (tituloNuevo[tipo]   || "Tu pareja te dejó algo ❤️");
+  const tituloEliminado = {
+    mensaje: `${nombreUsuario} eliminó su mensaje 💬`,
+    foto:    `${nombreUsuario} eliminó su foto 📸`,
+    cancion: `${nombreUsuario} eliminó su canción 🎵`,
+    frase:   `${nombreUsuario} eliminó su frase 💭`,
+    cita:    `${nombreUsuario} eliminó una cita 🗓️`,
+    plan:    `${nombreUsuario} eliminó un plan 💡`
+  };
+
+  const tituloBase = esEliminacion
+    ? (tituloEliminado[tipo] || `${nombreUsuario} eliminó algo 🗑️`)
+    : esEdicion
+      ? (tituloEditado[tipo] || `${nombreUsuario} editó algo ✏️`)
+      : (tituloNuevo[tipo]   || "Tu pareja te dejó algo ❤️");
 
   const titulo = "Daily Love 💕";
-  const cuerpo = preview
+  // Al eliminar no hay preview
+  const cuerpo = (!esEliminacion && preview)
     ? `${tituloBase}\n"${preview}"`
     : tituloBase;
 
-  // collapse_id agrupa notis del mismo tipo — si llegan 3 mensajes,
-  // solo se ve 1 noti (la más reciente) en vez de 3 separadas
   const collapseId = `${oneSignalId}-${tipo}`;
 
   try {
@@ -71,5 +82,6 @@ app.post("/notificar", async (req, res) => {
 });
 
 app.get("/", (req, res) => res.send("Daily Love Server OK"));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
